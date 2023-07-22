@@ -2,6 +2,7 @@ package de.tarent.challenge.store.products;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -25,6 +26,14 @@ public class Product {
 
     @ElementCollection
     private Set<String> eans;
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Product() {
     }
