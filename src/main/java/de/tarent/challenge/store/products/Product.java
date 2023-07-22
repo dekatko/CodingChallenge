@@ -26,7 +26,7 @@ public class Product {
     @ElementCollection
     private Set<String> eans;
 
-    private Product() {
+    public Product() {
     }
 
     public Product(String sku, String name, Set<String> eans) {
@@ -45,6 +45,10 @@ public class Product {
 
     public Set<String> getEans() {
         return Sets.newHashSet(eans);
+    }
+
+    public void addEans(String eans) {
+        this.eans.add(eans);
     }
 
     @Override
