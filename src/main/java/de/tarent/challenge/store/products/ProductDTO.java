@@ -1,5 +1,6 @@
 package de.tarent.challenge.store.products;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 
@@ -7,6 +8,8 @@ public class ProductDTO {
     private String sku;
 
     private String name;
+
+    private BigDecimal price;
 
     private Set<String> eans;
 
@@ -24,6 +27,12 @@ public class ProductDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public BigDecimal getPrice() { return price; }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     public Set<String> getEans() {

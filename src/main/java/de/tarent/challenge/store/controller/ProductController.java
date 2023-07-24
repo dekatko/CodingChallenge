@@ -32,8 +32,8 @@ public class ProductController {
     public ResponseEntity<Product> updateProduct(@PathVariable String sku, @RequestBody ProductDTO productUpdateDto) {
         Product productToUpdate = productCatalogRepository.findBySku(sku);
         if(productToUpdate != null) {
-            if(productUpdateDto.getName() != null){ productToUpdate.setName(productUpdateDto.getName()); }
-
+            if(productUpdateDto.getName() != null) { productToUpdate.setName(productUpdateDto.getName()); }
+            if(productUpdateDto.getPrice() != null) { productToUpdate.setPrice(productUpdateDto.getPrice());}
             if(productUpdateDto.getEans() != null && !productUpdateDto.getEans().isEmpty()) {
                 productUpdateDto.getEans().stream().forEach(e ->
                         productToUpdate.addEans(e));
@@ -50,6 +50,7 @@ public class ProductController {
     public ResponseEntity<Product> createProduct(@RequestBody ProductDTO productUpdateDto) {
         Product product = new Product();
         product.setName(productUpdateDto.getName());
+        product.setPrice(productUpdateDto.getPrice());
         product.setSku(productUpdateDto.getSku());
         product.setEans(productUpdateDto.getEans());
 

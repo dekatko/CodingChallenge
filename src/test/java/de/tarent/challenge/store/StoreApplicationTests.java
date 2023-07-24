@@ -25,15 +25,15 @@ public class StoreApplicationTests {
     @Autowired
     ProductCatalog productCatalog;
 
-    @Before
-    public void setup() {
-        Set<String> eans = new HashSet<>();
-		eans.add("1234567890");
-
-        Product product = new Product("1010", "test", eans);
-        productCatalog.save(product);
-
-    }
+//    @Before
+//    public void setup() {
+//        Set<String> eans = new HashSet<>();
+//		eans.add("1234567890");
+//
+//        Product product = new Product("1010", "test", eans);
+//        productCatalog.save(product);
+//
+//    }
 
     @Test
     public void contextLoads() {

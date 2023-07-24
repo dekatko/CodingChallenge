@@ -6,6 +6,8 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.Set;
 
@@ -24,28 +26,21 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    @Min(value = 0)
+    private BigDecimal price;
+
     @ElementCollection
     @NotEmpty
     private Set<String> eans;
 
-    public void setSku(String sku) {
-        this.sku = sku;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setEans(Set<String> eans) {
-        this.eans = eans;
-    }
-
     public Product() {
     }
 
-    public Product(String sku, String name, Set<String> eans) {
+    public Product(String sku, String name, BigDecimal price, Set<String> eans) {
         this.sku = sku;
         this.name = name;
+        this.price = price;
         this.eans = eans;
     }
 
@@ -53,13 +48,26 @@ public class Product {
         return sku;
     }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
+
+    public BigDecimal getPrice() { return price; }
 
     public Set<String> getEans() {
         return Sets.newHashSet(eans);
     }
+
+
+    public void setSku(String sku) { this.sku = sku; }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public void setEans(Set<String> eans) { this.eans = eans; }
 
     public void addEans(String eans) {
         this.eans.add(eans);

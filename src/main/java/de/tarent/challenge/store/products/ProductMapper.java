@@ -9,6 +9,6 @@ public class ProductMapper {
     }
 
     public Product toProduct(ProductDTO productDto) {
-        return new Product(productDto.getSku(), productDto.getName(), productDto.getEans());
+        return new Product(productDto.getSku(), productDto.getName(), productDto.getPrice(), productDto.getEans());
     }
 }
