@@ -3,11 +3,9 @@ package de.tarent.challenge.store.products;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
 
@@ -20,11 +18,14 @@ public class Product {
     @GeneratedValue(strategy = AUTO)
     private Long id;
 
+    @Column(nullable = false, updatable = false)
     private String sku;
 
+    @Column(nullable = false)
     private String name;
 
     @ElementCollection
+    @NotEmpty
     private Set<String> eans;
 
     public void setSku(String sku) {
@@ -33,6 +34,10 @@ public class Product {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setEans(Set<String> eans) {
+        this.eans = eans;
     }
 
     public Product() {
