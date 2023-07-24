@@ -30,17 +30,31 @@ public class ProductController {
 
     @PutMapping("/update-product/{sku}")
     public ResponseEntity<Product> updateProduct(@PathVariable String sku, @RequestBody ProductDTO productUpdateDto) {
-        Product persisted = productCatalogRepository.findBySku(sku);
-        Product productUpdate = productMapper.toProduct(productUpdateDto);
-        if(persisted != null) {
-            if(productUpdateDto.getName() != null){ persisted.setName(productUpdateDto.getName()); }
+        Product productToUpdate = productCatalogRepository.findBySku(sku);
+        if(productToUpdate != null) {
+            if(productUpdateDto.getName() != null){ productToUpdate.setName(productUpdateDto.getName()); }
 
-            if(productUpdateDto.getEans() != null && !productUpdateDto.getEans().isEmpty()) { productUpdateDto.getEans().stream().forEach(e -> persisted.addEans(e)); }
+            if(productUpdateDto.getEans() != null && !productUpdateDto.getEans().isEmpty()) {
+                productUpdateDto.getEans().stream().forEach(e ->
+                        productToUpdate.addEans(e));
+            }
 
         } else {
             ResponseEntity.notFound();
         }
-        productCatalogRepository.save(persisted);
-        return ResponseEntity.ok(persisted);
+        productCatalogRepository.save(productToUpdate);
+        return ResponseEntity.ok(productToUpdate);
+    }
+
+    @PostMapping("/create-product")
+    public ResponseEntity<Product> createProduct(@RequestBody ProductDTO productUpdateDto) {
+        Product product = new Product();
+        product.setName(productUpdateDto.getName());
+        product.setSku(productUpdateDto.getSku());
+        product.setEans(productUpdateDto.getEans());
+
+        productCatalogRepository.save(product);
+
+        return ResponseEntity.ok(product);
     }
 }
