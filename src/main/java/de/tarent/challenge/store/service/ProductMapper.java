@@ -1,5 +1,7 @@
-package de.tarent.challenge.store.products;
+package de.tarent.challenge.store.service;
 
+import de.tarent.challenge.store.model.Product;
+import de.tarent.challenge.store.model.ProductDTO;
 import org.springframework.stereotype.Component;
 
 @Component

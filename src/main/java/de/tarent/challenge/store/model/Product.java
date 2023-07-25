@@ -1,8 +1,7 @@
-package de.tarent.challenge.store.products;
+package de.tarent.challenge.store.model;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
-import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;

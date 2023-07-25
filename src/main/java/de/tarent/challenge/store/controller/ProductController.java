@@ -1,19 +1,21 @@
 package de.tarent.challenge.store.controller;
 
-import de.tarent.challenge.store.products.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import de.tarent.challenge.store.model.Product;
+import de.tarent.challenge.store.model.ProductDTO;
+import de.tarent.challenge.store.service.*;
+import de.tarent.challenge.store.repository.ProductRepo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
-    private final ProductCatalog productCatalogRepository;
+    private final ProductRepo productRepoRepository;
     private final ProductMapper productMapper;
     private final ProductService productService;
 
-    public ProductController(ProductCatalog productCatalogRepository, ProductMapper productMapper, ProductService productService) {
-        this.productCatalogRepository = productCatalogRepository;
+    public ProductController(ProductRepo productRepoRepository, ProductMapper productMapper, ProductService productService) {
+        this.productRepoRepository = productRepoRepository;
         this.productMapper = productMapper;
         this.productService = productService;
     }
@@ -30,19 +32,19 @@ public class ProductController {
 
     @PutMapping("/update-product/{sku}")
     public ResponseEntity<Product> updateProduct(@PathVariable String sku, @RequestBody ProductDTO productUpdateDto) {
-        Product productToUpdate = productCatalogRepository.findBySku(sku);
+        Product productToUpdate = productRepoRepository.findBySku(sku);
         if(productToUpdate != null) {
             if(productUpdateDto.getName() != null) { productToUpdate.setName(productUpdateDto.getName()); }
             if(productUpdateDto.getPrice() != null) { productToUpdate.setPrice(productUpdateDto.getPrice());}
             if(productUpdateDto.getEans() != null && !productUpdateDto.getEans().isEmpty()) {
-                productUpdateDto.getEans().stream().forEach(e ->
+                productUpdateDto.getEans().forEach(e ->
                         productToUpdate.addEans(e));
             }
 
         } else {
             ResponseEntity.notFound();
         }
-        productCatalogRepository.save(productToUpdate);
+        productRepoRepository.save(productToUpdate);
         return ResponseEntity.ok(productToUpdate);
     }
 
@@ -54,7 +56,7 @@ public class ProductController {
         product.setSku(productUpdateDto.getSku());
         product.setEans(productUpdateDto.getEans());
 
-        productCatalogRepository.save(product);
+        productRepoRepository.save(product);
 
         return ResponseEntity.ok(product);
     }

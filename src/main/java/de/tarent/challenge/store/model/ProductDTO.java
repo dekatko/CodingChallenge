@@ -1,4 +1,4 @@
-package de.tarent.challenge.store.products;
+package de.tarent.challenge.store.model;
 
 import java.math.BigDecimal;
 import java.util.Set;
