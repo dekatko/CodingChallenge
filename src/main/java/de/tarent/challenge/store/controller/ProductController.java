@@ -4,6 +4,7 @@ import de.tarent.challenge.store.model.Product;
 import de.tarent.challenge.store.model.ProductDTO;
 import de.tarent.challenge.store.service.*;
 import de.tarent.challenge.store.repository.ProductRepo;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,19 +32,24 @@ public class ProductController {
     }
 
     @PutMapping("/update-product/{sku}")
-    public ResponseEntity<Product> updateProduct(@PathVariable String sku, @RequestBody ProductDTO productUpdateDto) {
+    public ResponseEntity updateProduct(@PathVariable String sku, @RequestBody ProductDTO productUpdateDto) {
         Product productToUpdate = productRepoRepository.findBySku(sku);
-        if(productToUpdate != null) {
-            if(productUpdateDto.getName() != null) { productToUpdate.setName(productUpdateDto.getName()); }
-            if(productUpdateDto.getPrice() != null) { productToUpdate.setPrice(productUpdateDto.getPrice());}
-            if(productUpdateDto.getEans() != null && !productUpdateDto.getEans().isEmpty()) {
-                productUpdateDto.getEans().forEach(e ->
-                        productToUpdate.addEans(e));
+        if(productToUpdate == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
+        } else if (!productToUpdate.isAvailable()) {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("Product not available");
+        } else {
+                if(productUpdateDto.getName() != null) { productToUpdate.setName(productUpdateDto.getName()); }
+                if(productUpdateDto.getPrice() != null) { productToUpdate.setPrice(productUpdateDto.getPrice());}
+                if(productUpdateDto.getEans() != null && !productUpdateDto.getEans().isEmpty()) {
+                    productUpdateDto.getEans().forEach(e ->
+                            productToUpdate.addEans(e));
+                }
+                if(productToUpdate.isAvailable() != productUpdateDto.isAvailable()) {
+                    productToUpdate.setAvailable(productUpdateDto.isAvailable());
+                }
             }
 
-        } else {
-            ResponseEntity.notFound();
-        }
         productRepoRepository.save(productToUpdate);
         return ResponseEntity.ok(productToUpdate);
     }

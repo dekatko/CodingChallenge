@@ -13,6 +13,8 @@ public class ProductDTO {
 
     private Set<String> eans;
 
+    private boolean available;
+
     public String getSku() {
         return sku;
     }
@@ -43,13 +45,22 @@ public class ProductDTO {
         this.eans = eans;
     }
 
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
     public ProductDTO() {
 
     }
 
-    public ProductDTO(String sku, String name, Set<String> eans) {
+    public ProductDTO(String sku, String name, Set<String> eans, boolean available) {
         this.sku = sku;
         this.name = name;
         this.eans = eans;
+        this.available = available;
     }
 }

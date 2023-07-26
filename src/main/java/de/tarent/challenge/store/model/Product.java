@@ -33,14 +33,18 @@ public class Product {
     @NotEmpty
     private Set<String> eans;
 
+    @Column(nullable = false)
+    private boolean available;
+
     public Product() {
     }
 
-    public Product(String sku, String name, BigDecimal price, Set<String> eans) {
+    public Product(String sku, String name, BigDecimal price, Set<String> eans, boolean available) {
         this.sku = sku;
         this.name = name;
         this.price = price;
         this.eans = eans;
+        this.available = available;
     }
 
     public String getSku() {
@@ -70,6 +74,14 @@ public class Product {
 
     public void addEans(String eans) {
         this.eans.add(eans);
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 
     @Override
