@@ -12,12 +12,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/products")
 public class ProductController {
     private final ProductRepo productRepoRepository;
-    private final ProductMapper productMapper;
     private final ProductService productService;
 
-    public ProductController(ProductRepo productRepoRepository, ProductMapper productMapper, ProductService productService) {
+    public ProductController(ProductRepo productRepoRepository, ProductService productService) {
         this.productRepoRepository = productRepoRepository;
-        this.productMapper = productMapper;
         this.productService = productService;
     }
 
