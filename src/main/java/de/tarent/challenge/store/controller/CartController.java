@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/carts")
@@ -45,12 +48,18 @@ public class CartController {
         return ResponseEntity.ok(cart);
     }
 
-    @PostMapping("/create-cart")
-    public ResponseEntity<Cart> createCart(@RequestBody CartDTO cartDTO) {
+    @PostMapping("/create-cart/{sku}/{quantity}")
+    public ResponseEntity<Cart> createCart(@PathVariable String sku, @PathVariable Integer quantity, @RequestBody CartDTO cartDTO) {
         User user = userRepo.findUserByUsername(cartDTO.getUser().getUsername());
+        Product product = productRepo.findBySku(sku);
+        List<CartProduct> cartProductList = new ArrayList<>();
         Cart cart = new Cart();
         cart.setUser(user);
-        cart.setCartProducts(cartDTO.getCartProducts());
+        cart.setCheckedOut(false);
+        cartRepo.save(cart);
+
+        cartProductList.add(cartProductRepo.save(new CartProduct(cart, product, quantity)));
+        cart.setCartProducts(cartProductList);
 
         cartRepo.save(cart);
         return ResponseEntity.ok(cart);

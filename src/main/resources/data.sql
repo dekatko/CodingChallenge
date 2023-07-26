@@ -17,6 +17,7 @@ INSERT INTO product_eans (product_id, eans) VALUES (4, '46025548');
 INSERT INTO product_eans (product_id, eans) VALUES (5, '54342316');
 
 INSERT INTO user (id, username) VALUES (1, 'denis-the-menace');
+INSERT INTO user (id, username) VALUES (2, 'Yedi-Tester');
 INSERT INTO cart (id, user_id, checked_out) VALUES (1, 1, false);
 INSERT INTO cart_product (quantity, cart_id, product_id) VALUES (2, 1, 1);
 INSERT INTO cart_product (quantity, cart_id, product_id) VALUES (5, 1, 4);

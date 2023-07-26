@@ -73,14 +73,14 @@ public class TestCartRestController {
 
     @Test
     public void createCartTest() throws Exception {
-        String jsonForBody = "[{\"cartProducts\":[{\"quantity\":\"8\",\"product\":{\"sku\":\"B001\",\"name\":\"Couscous\",\"price\":\"0.99\",\"eans\":[\"54342316\"]}}],\"user\":{\"username\":\"denis-the-menace\"},\"checkedOut\":\"false\"}]";
+        String jsonForBody = "{\"user\": {\"username\": \"Yedi-Tester\"}}";
 
-        mvc.perform(post(BASE_PATH + "create-cart")
+        mvc.perform(post(BASE_PATH + "create-cart/B001/8")
                         .content(jsonForBody)
                         .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.cartProducts[2].quantity").value("8"))
-                .andExpect(jsonPath("$.cartProducts[2].product.name").value("Couscous"));
+                .andExpect(jsonPath("$.cartProducts[0].quantity").value("8"))
+                .andExpect(jsonPath("$.cartProducts[0].product.name").value("Couscous"));
     }
 }

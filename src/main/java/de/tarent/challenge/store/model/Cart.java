@@ -19,7 +19,6 @@ public class Cart {
     private Long id;
 
     @OneToMany(mappedBy = "pk.cart")
-    @NotEmpty
     private List<CartProduct> cartProducts;
 
     @OneToOne
