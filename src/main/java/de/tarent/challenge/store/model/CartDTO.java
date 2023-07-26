@@ -7,6 +7,8 @@ public class CartDTO {
 
     private User user;
 
+    private boolean checkedOut;
+
     public CartDTO() {
 
     }
@@ -30,5 +32,13 @@ public class CartDTO {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public boolean isCheckedOut() {
+        return checkedOut;
+    }
+
+    public void setCheckedOut(boolean checkedOut) {
+        this.checkedOut = checkedOut;
     }
 }

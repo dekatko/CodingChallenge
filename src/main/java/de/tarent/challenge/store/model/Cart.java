@@ -58,4 +58,13 @@ public class Cart {
     public void setCheckedOut(boolean checkedOut) {
         this.checkedOut = checkedOut;
     }
+
+    public Cart() {
+    }
+
+    public Cart(List<CartProduct> cartProducts, User user, boolean checkedOut) {
+        this.cartProducts = cartProducts;
+        this.user = user;
+        this.checkedOut = checkedOut;
+    }
 }
