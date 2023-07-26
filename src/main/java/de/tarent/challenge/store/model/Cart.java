@@ -26,10 +26,21 @@ public class Cart {
     @NotNull
     private User user;
 
+    @Column(nullable = false)
+    private boolean checkedOut;
+
     @Transient
     public BigDecimal getTotalCartPrice() {
         List<CartProduct> cartProducts = getCartProducts();
         return cartProducts.stream().map(cp -> cp.getTotalPrice()).reduce(BigDecimal.ZERO, (a, b) -> a.add(b));
+    }
+
+    public void setCartProducts(List<CartProduct> cartProducts) {
+        this.cartProducts = cartProducts;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public List<CartProduct> getCartProducts() {
@@ -40,11 +51,11 @@ public class Cart {
         return user;
     }
 
-    public void setCartProducts(List<CartProduct> cartProducts) {
-        this.cartProducts = cartProducts;
+    public boolean isCheckedOut() {
+        return checkedOut;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setCheckedOut(boolean checkedOut) {
+        this.checkedOut = checkedOut;
     }
 }

@@ -6,6 +6,7 @@ import de.tarent.challenge.store.repository.CartRepo;
 import de.tarent.challenge.store.repository.ProductRepo;
 import de.tarent.challenge.store.repository.UserRepo;
 import de.tarent.challenge.store.service.CartService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,16 +57,33 @@ public class CartController {
     }
 
     @PutMapping("/update-cart/{sku}/{quantity}")
-    public ResponseEntity<Cart> updateCart(@PathVariable String sku, @PathVariable Integer quantity, @RequestBody UserDTO user) {
+    public ResponseEntity updateCart(@PathVariable String sku, @PathVariable Integer quantity, @RequestBody UserDTO user) {
         Cart cartToUpdate = cartRepo.findCartByUser(user);
-        Product product = productRepo.findBySku(sku);
+        if(cartToUpdate.isCheckedOut()) {
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Cart cannot be updated. Cart is already checked out.");
+        } else {
+            Product product = productRepo.findBySku(sku);
 
-        cartToUpdate.getCartProducts().add(cartProductRepo.save(new CartProduct(cartToUpdate, product, quantity)));
+            cartToUpdate.getCartProducts().add(cartProductRepo.save(new CartProduct(cartToUpdate, product, quantity)));
 
-        cartRepo.save(cartToUpdate);
+            cartRepo.save(cartToUpdate);
 
-        return ResponseEntity.ok(cartToUpdate);
+            return ResponseEntity.ok(cartToUpdate);
+        }
     }
 
+    @PutMapping("/checkout-cart")
+    public ResponseEntity checkoutCart(@RequestBody UserDTO user) {
+        Cart cartToCheckout = cartRepo.findCartByUser(user);
+
+        if(!cartToCheckout.isCheckedOut()) {
+            cartToCheckout.setCheckedOut(true);
+            cartRepo.save(cartToCheckout);
+
+            return ResponseEntity.ok(cartToCheckout);
+        }
+
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Cart already checked out!");
+    }
 
 }
