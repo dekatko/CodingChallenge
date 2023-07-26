@@ -77,4 +77,25 @@ public class TestProductRestController {
                 .andExpect(jsonPath("$.price").value("6.33"))
                 .andExpect(jsonPath("$.eans").isNotEmpty());
     }
+
+    @Test
+    public void addUnavailableProductInCartTest() throws Exception {
+        String jsonForProductUpdateBody = "{\"available\": \"true\"}";
+        String jsonForCartUpdateBody = "{\"username\": \"denis-the-menace\"}";
+
+        mvc.perform(put(BASE_PATH + "update-product/102")
+                        .content(jsonForProductUpdateBody)
+                        .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.available").value("true"))
+                .andDo(result ->
+
+
+        mvc.perform(put(BASE_PATH + "update-cart/102/3")
+                        .content(jsonForCartUpdateBody)
+                        .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError()));
+    }
 }
