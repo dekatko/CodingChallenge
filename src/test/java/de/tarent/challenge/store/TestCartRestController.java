@@ -83,4 +83,35 @@ public class TestCartRestController {
                 .andExpect(jsonPath("$.cartProducts[0].quantity").value("8"))
                 .andExpect(jsonPath("$.cartProducts[0].product.name").value("Couscous"));
     }
+
+    @Test
+    public void checkoutCartTest() throws Exception {
+        String jsonForBody = "{\"username\": \"denis-the-menace\"}";
+
+        mvc.perform(put(BASE_PATH + "checkout-cart")
+                        .content(jsonForBody)
+                        .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.checkedOut").exists())
+                .andExpect(jsonPath("$.checkedOut").value("true"));
+    }
+
+    @Test
+    public void checkoutAlreadyCheckedoutCartTest() throws Exception {
+        String jsonForBody = "{\"username\": \"denis-the-menace\"}";
+
+        mvc.perform(put(BASE_PATH + "checkout-cart")
+                        .content(jsonForBody)
+                        .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.checkedOut").exists())
+                .andExpect(jsonPath("$.checkedOut").value("true"))
+                .andDo(result -> mvc.perform(put(BASE_PATH + "checkout-cart")
+                                .content(jsonForBody)
+                                .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
+                        .andDo(print())
+                        .andExpect(status().is4xxClientError()));
+    }
 }
