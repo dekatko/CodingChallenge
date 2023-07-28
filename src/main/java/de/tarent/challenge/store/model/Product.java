@@ -19,7 +19,7 @@ public class Product {
     @GeneratedValue(strategy = AUTO)
     private Long id;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, unique = true)
     private String sku;
 
     @Column(nullable = false)

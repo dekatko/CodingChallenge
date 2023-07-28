@@ -80,7 +80,7 @@ public class TestProductRestController {
 
     @Test
     public void addUnavailableProductInCartTest() throws Exception {
-        String jsonForProductUpdateBody = "{\"available\": \"true\"}";
+        String jsonForProductUpdateBody = "{\"available\": \"false\"}";
         String jsonForCartUpdateBody = "{\"username\": \"denis-the-menace\"}";
 
         mvc.perform(put(BASE_PATH + "update-product/102")
@@ -88,7 +88,7 @@ public class TestProductRestController {
                         .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.available").value("true"))
+                .andExpect(jsonPath("$.available").value("false"))
                 .andDo(result ->
 
 

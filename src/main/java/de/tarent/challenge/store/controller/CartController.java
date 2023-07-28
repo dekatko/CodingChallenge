@@ -48,6 +48,7 @@ public class CartController {
         return ResponseEntity.ok(cart);
     }
 
+    //Selber User darf nicht mehr als eine Cart erstellen
     @PostMapping("/create-cart/{sku}/{quantity}")
     public ResponseEntity<Cart> createCart(@PathVariable String sku, @PathVariable Integer quantity, @RequestBody CartDTO cartDTO) {
         User user = userRepo.findUserByUsername(cartDTO.getUser().getUsername());
@@ -70,6 +71,7 @@ public class CartController {
         Cart cartToUpdate = cartRepo.findCartByUser(user);
         Product product = productRepo.findBySku(sku);
 
+        //Produkt bei zweitem Update Menge erhöhen, nicht neues Produkt hinzufügen
         if(cartToUpdate.isCheckedOut()) {
             return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Cart cannot be updated. Cart is already checked out.");
         } else if(product.isAvailable()) {
@@ -77,12 +79,14 @@ public class CartController {
 
             cartRepo.save(cartToUpdate);
 
+            //Ganzen Cart zurückgeben
             return ResponseEntity.ok(cartToUpdate);
         } else {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("Product not available");
         }
     }
 
+    //Nach Checkout KEINE Preisänderung!
     @PutMapping("/checkout-cart")
     public ResponseEntity checkoutCart(@RequestBody UserDTO user) {
         Cart cartToCheckout = cartRepo.findCartByUser(user);

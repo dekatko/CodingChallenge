@@ -27,6 +27,8 @@ public class TestCartRestController {
     @Autowired
     MockMvc mvc;
 
+    //DB in Before konfigurieren damit er die Db dropped
+
     @Test
     public void contextLoads() {
     }

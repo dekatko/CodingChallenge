@@ -1,12 +1,14 @@
 package de.tarent.challenge.store.model;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Set;
 
-
+//Validation in DTO from Spring
 public class ProductDTO {
     private String sku;
 
+    @NotNull
     private String name;
 
     private BigDecimal price;
