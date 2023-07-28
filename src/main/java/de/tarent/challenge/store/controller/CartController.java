@@ -41,7 +41,7 @@ public class CartController {
         return cartService.retrieveAllCarts();
     }
 
-    @GetMapping("/current-cart")
+    @GetMapping
     public ResponseEntity<Cart> getCurrentCart(@RequestBody UserDTO user) {
         Cart cart = cartRepo.findCartByUser(user);
 
@@ -49,7 +49,7 @@ public class CartController {
     }
 
     //Selber User darf nicht mehr als eine Cart erstellen
-    @PostMapping("/create-cart/{sku}/{quantity}")
+    @PostMapping("/{sku}/{quantity}")
     public ResponseEntity<Cart> createCart(@PathVariable String sku, @PathVariable Integer quantity, @RequestBody CartDTO cartDTO) {
         User user = userRepo.findUserByUsername(cartDTO.getUser().getUsername());
         Product product = productRepo.findBySku(sku);
@@ -66,7 +66,7 @@ public class CartController {
         return ResponseEntity.ok(cart);
     }
 
-    @PutMapping("/update-cart/{sku}/{quantity}")
+    @PutMapping("/{sku}/{quantity}")
     public ResponseEntity updateCart(@PathVariable String sku, @PathVariable Integer quantity, @RequestBody UserDTO user) {
         Cart cartToUpdate = cartRepo.findCartByUser(user);
         Product product = productRepo.findBySku(sku);
@@ -87,7 +87,7 @@ public class CartController {
     }
 
     //Nach Checkout KEINE Preisänderung!
-    @PutMapping("/checkout-cart")
+    @PutMapping
     public ResponseEntity checkoutCart(@RequestBody UserDTO user) {
         Cart cartToCheckout = cartRepo.findCartByUser(user);
 

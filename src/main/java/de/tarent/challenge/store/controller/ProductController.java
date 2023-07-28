@@ -29,7 +29,7 @@ public class ProductController {
         return productService.retrieveProductBySku(sku);
     }
 
-    @PutMapping("/update-product/{sku}")
+    @PutMapping("/{sku}")
     public ResponseEntity updateProduct(@PathVariable String sku, @RequestBody ProductDTO productUpdateDto) {
         Product productToUpdate = productRepoRepository.findBySku(sku);
         if(productToUpdate == null) {
@@ -52,7 +52,8 @@ public class ProductController {
         return ResponseEntity.ok(productToUpdate);
     }
 
-    @PostMapping("/create-product")
+    //Rest braucht keine Methoden namen, wird durch Art des Aufrufs aufgelöst
+    @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody ProductDTO productUpdateDto) {
         Product product = new Product();
         product.setName(productUpdateDto.getName());
@@ -62,6 +63,7 @@ public class ProductController {
 
         productRepoRepository.save(product);
 
+        //created Status
         return ResponseEntity.ok(product);
     }
 }
