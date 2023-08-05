@@ -40,5 +40,16 @@ public class ProductService {
             }
         return productRepo.save(productToUpdate);
     }
+
+    //Check if given product sku already exists in Database
+    public Product createProduct(ProductDTO productDto) {
+        Product product = new Product();
+        product.setName(productDto.getName());
+        product.setPrice(productDto.getPrice());
+        product.setSku(productDto.getSku());
+        product.setEans(productDto.getEans());
+
+        return productRepo.save(product);
+    }
 }
 

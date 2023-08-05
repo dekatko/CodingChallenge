@@ -41,18 +41,8 @@ public class ProductController {
         }
     }
 
-    //Rest braucht keine Methoden namen, wird durch Art des Aufrufs aufgelöst
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody ProductDTO productUpdateDto) {
-        Product product = new Product();
-        product.setName(productUpdateDto.getName());
-        product.setPrice(productUpdateDto.getPrice());
-        product.setSku(productUpdateDto.getSku());
-        product.setEans(productUpdateDto.getEans());
-
-        productRepoRepository.save(product);
-
-        //created Status
-        return ResponseEntity.ok(product);
+        return ResponseEntity.ok(productService.createProduct(productUpdateDto));
     }
 }
