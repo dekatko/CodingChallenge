@@ -2,8 +2,8 @@ package de.tarent.challenge.store.controller;
 
 import de.tarent.challenge.store.model.Product;
 import de.tarent.challenge.store.model.ProductDTO;
-import de.tarent.challenge.store.service.*;
 import de.tarent.challenge.store.repository.ProductRepo;
+import de.tarent.challenge.store.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +32,7 @@ public class ProductController {
     @PutMapping("/{sku}")
     public ResponseEntity updateProduct(@PathVariable String sku, @RequestBody ProductDTO productUpdateDto) {
         Product productToUpdate = productRepoRepository.findBySku(sku);
-        if(productToUpdate == null) {
+        if (productToUpdate == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
         } else if (!productToUpdate.isAvailable()) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("Product not available");
@@ -42,7 +42,11 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody ProductDTO productUpdateDto) {
-        return ResponseEntity.ok(productService.createProduct(productUpdateDto));
+    public ResponseEntity createProduct(@RequestBody ProductDTO productUpdateDto) {
+        if (productRepoRepository.findBySku(productUpdateDto.getSku()) != null) {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("Product Sku already exists");
+        } else {
+            return ResponseEntity.ok(productService.createProduct(productUpdateDto));
+        }
     }
 }
