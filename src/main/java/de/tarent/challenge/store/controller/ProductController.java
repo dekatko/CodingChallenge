@@ -37,19 +37,8 @@ public class ProductController {
         } else if (!productToUpdate.isAvailable()) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("Product not available");
         } else {
-                if(productUpdateDto.getName() != null) { productToUpdate.setName(productUpdateDto.getName()); }
-                if(productUpdateDto.getPrice() != null) { productToUpdate.setPrice(productUpdateDto.getPrice());}
-                if(productUpdateDto.getEans() != null && !productUpdateDto.getEans().isEmpty()) {
-                    productUpdateDto.getEans().forEach(e ->
-                            productToUpdate.addEans(e));
-                }
-                if(productToUpdate.isAvailable() != productUpdateDto.isAvailable()) {
-                    productToUpdate.setAvailable(productUpdateDto.isAvailable());
-                }
-            }
-
-        productRepoRepository.save(productToUpdate);
-        return ResponseEntity.ok(productToUpdate);
+            return ResponseEntity.ok(productService.updateProduct(sku, productUpdateDto));
+        }
     }
 
     //Rest braucht keine Methoden namen, wird durch Art des Aufrufs aufgelöst
