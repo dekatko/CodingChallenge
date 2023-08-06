@@ -1,6 +1,9 @@
 package de.tarent.challenge.store.controller;
 
-import de.tarent.challenge.store.model.*;
+import de.tarent.challenge.store.model.Cart;
+import de.tarent.challenge.store.model.CartProduct;
+import de.tarent.challenge.store.model.Product;
+import de.tarent.challenge.store.model.UserDTO;
 import de.tarent.challenge.store.repository.CartProductRepo;
 import de.tarent.challenge.store.repository.CartRepo;
 import de.tarent.challenge.store.repository.ProductRepo;
@@ -9,9 +12,6 @@ import de.tarent.challenge.store.service.CartService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @RestController
@@ -51,21 +51,13 @@ public class CartController {
     }
 
     //Selber User darf nicht mehr als eine Cart erstellen
-    @PostMapping("/{sku}/{quantity}")
-    public ResponseEntity<Cart> createCart(@PathVariable String sku, @PathVariable Integer quantity, @RequestBody CartDTO cartDTO) {
-        User user = userRepo.findUserByUsername(cartDTO.getUser().getUsername());
-        Product product = productRepo.findBySku(sku);
-        List<CartProduct> cartProductList = new ArrayList<>();
-        Cart cart = new Cart();
-        cart.setUser(user);
-        cart.setCheckedOut(false);
-        cartRepo.save(cart);
-
-        cartProductList.add(cartProductRepo.save(new CartProduct(cart, product, quantity)));
-        cart.setCartProducts(cartProductList);
-
-        cartRepo.save(cart);
-        return ResponseEntity.ok(cart);
+    @PostMapping
+    public ResponseEntity createCart(@RequestBody UserDTO userDTO) {
+        Cart cart = cartService.createCart(userDTO.getUsername());
+        if (cart != null) {
+            return ResponseEntity.ok(cart);
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("A cart already exists for this user");
     }
 
     @PutMapping("/{sku}/{quantity}")

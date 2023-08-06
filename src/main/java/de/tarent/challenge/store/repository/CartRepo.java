@@ -10,4 +10,5 @@ public interface CartRepo extends JpaRepository<Cart, Long> {
     @Query("SELECT c FROM Cart c WHERE c.user.username = :#{#username}")
     Cart findCartByUserName(@Param("username") String username);
 
+
 }
