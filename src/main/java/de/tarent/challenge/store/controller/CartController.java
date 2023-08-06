@@ -37,15 +37,17 @@ public class CartController {
     }
 
     @GetMapping
-    public Iterable<Cart> retrieveCarts() {
-        return cartService.retrieveAllCarts();
+    public ResponseEntity<Iterable<Cart>> retrieveCarts() {
+        return ResponseEntity.ok(cartService.retrieveAllCarts());
     }
 
-    @GetMapping
-    public ResponseEntity<Cart> getCurrentCart(@RequestBody UserDTO user) {
-        Cart cart = cartRepo.findCartByUser(user);
-
-        return ResponseEntity.ok(cart);
+    @GetMapping("/{userId}")
+    public ResponseEntity getCurrentCart(@PathVariable String username) {
+        Cart cart = cartService.retrieveCartByUserName(username);
+        if (cart != null) {
+            return ResponseEntity.ok(cart);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This user does not have a cart yet");
     }
 
     //Selber User darf nicht mehr als eine Cart erstellen
@@ -68,13 +70,13 @@ public class CartController {
 
     @PutMapping("/{sku}/{quantity}")
     public ResponseEntity updateCart(@PathVariable String sku, @PathVariable Integer quantity, @RequestBody UserDTO user) {
-        Cart cartToUpdate = cartRepo.findCartByUser(user);
+        Cart cartToUpdate = cartRepo.findCartByUserName(user.getUsername());
         Product product = productRepo.findBySku(sku);
 
         //Produkt bei zweitem Update Menge erhöhen, nicht neues Produkt hinzufügen
-        if(cartToUpdate.isCheckedOut()) {
+        if (cartToUpdate.isCheckedOut()) {
             return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Cart cannot be updated. Cart is already checked out.");
-        } else if(product.isAvailable()) {
+        } else if (product.isAvailable()) {
             cartToUpdate.getCartProducts().add(cartProductRepo.save(new CartProduct(cartToUpdate, product, quantity)));
 
             cartRepo.save(cartToUpdate);
@@ -89,9 +91,9 @@ public class CartController {
     //Nach Checkout KEINE Preisänderung!
     @PutMapping
     public ResponseEntity checkoutCart(@RequestBody UserDTO user) {
-        Cart cartToCheckout = cartRepo.findCartByUser(user);
+        Cart cartToCheckout = cartRepo.findCartByUserName(user.getUsername());
 
-        if(!cartToCheckout.isCheckedOut()) {
+        if (!cartToCheckout.isCheckedOut()) {
             cartToCheckout.setCheckedOut(true);
             cartRepo.save(cartToCheckout);
 
