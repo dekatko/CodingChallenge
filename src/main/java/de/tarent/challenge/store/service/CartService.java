@@ -1,10 +1,12 @@
 package de.tarent.challenge.store.service;
 
-import de.tarent.challenge.store.model.Cart;
-import de.tarent.challenge.store.model.CartProduct;
-import de.tarent.challenge.store.model.User;
+import de.tarent.challenge.store.model.*;
+import de.tarent.challenge.store.repository.CartProductRepo;
 import de.tarent.challenge.store.repository.CartRepo;
+import de.tarent.challenge.store.repository.ProductRepo;
 import de.tarent.challenge.store.repository.UserRepo;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,9 +19,15 @@ public class CartService {
 
     private final UserRepo userRepo;
 
-    public CartService(CartRepo cartRepo, UserRepo userRepo) {
+    private final ProductRepo productRepo;
+
+    private final CartProductRepo cartProductRepo;
+
+    public CartService(CartRepo cartRepo, UserRepo userRepo, ProductRepo productRepo, CartProductRepo cartProductRepo) {
         this.cartRepo = cartRepo;
         this.userRepo = userRepo;
+        this.productRepo = productRepo;
+        this.cartProductRepo = cartProductRepo;
     }
 
     public List<Cart> retrieveAllCarts() {
@@ -42,5 +50,24 @@ public class CartService {
             return cartRepo.save(cart);
         }
         return null;
+    }
+
+    public ResponseEntity updateCart(String sku, Integer quantity, UserDTO user) {
+        Cart cartToUpdate = cartRepo.findCartByUserName(user.getUsername());
+        Product product = productRepo.findBySku(sku);
+
+        //Produkt bei zweitem Update Menge erhöhen, nicht neues Produkt hinzufügen
+        if (cartToUpdate.isCheckedOut()) {
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Cart cannot be updated. Cart is already checked out.");
+        } else if (product.isAvailable()) {
+            cartToUpdate.getCartProducts().add(cartProductRepo.save(new CartProduct(cartToUpdate, product, quantity)));
+
+            cartRepo.save(cartToUpdate);
+
+            //Ganzen Cart zurückgeben
+            return ResponseEntity.ok(cartToUpdate);
+        } else {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("Product not available");
+        }
     }
 }
