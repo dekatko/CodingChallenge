@@ -58,19 +58,9 @@ public class CartController {
         return cartService.updateCart(sku, quantity, user);
     }
 
-    //Nach Checkout KEINE Preisänderung!
     @PutMapping
     public ResponseEntity checkoutCart(@RequestBody UserDTO user) {
-        Cart cartToCheckout = cartRepo.findCartByUserName(user.getUsername());
-
-        if (!cartToCheckout.isCheckedOut()) {
-            cartToCheckout.setCheckedOut(true);
-            cartRepo.save(cartToCheckout);
-
-            return ResponseEntity.ok(cartToCheckout);
-        }
-
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Cart already checked out!");
+        return cartService.checkoutCart(user);
     }
 
 }

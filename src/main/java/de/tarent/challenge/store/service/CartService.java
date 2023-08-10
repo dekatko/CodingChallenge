@@ -70,4 +70,18 @@ public class CartService {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("Product not available");
         }
     }
+
+    //Nach Checkout KEINE Preisänderung!
+    public ResponseEntity checkoutCart(UserDTO user) {
+        Cart cartToCheckout = cartRepo.findCartByUserName(user.getUsername());
+
+        if (!cartToCheckout.isCheckedOut()) {
+            cartToCheckout.setCheckedOut(true);
+            cartRepo.save(cartToCheckout);
+
+            return ResponseEntity.ok(cartToCheckout);
+        }
+
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Cart already checked out!");
+    }
 }
