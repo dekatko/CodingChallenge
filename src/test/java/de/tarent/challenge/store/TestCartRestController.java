@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class TestCartRestController {
 
-    public static final String BASE_PATH = "/carts/";
+    public static final String BASE_PATH = "/carts";
     @Autowired
     MockMvc mvc;
 
@@ -34,9 +34,9 @@ public class TestCartRestController {
     }
 
     @Test
-    public void retrieveCartsTest() throws Exception{
+    public void retrieveCartsTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                .get(BASE_PATH))
+                        .get(BASE_PATH))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].user").exists())
@@ -47,11 +47,11 @@ public class TestCartRestController {
     }
 
     @Test
-    public void retrieveCurrentCartTest() throws Exception{
+    public void retrieveCurrentCartTest() throws Exception {
         String jsonForBody = "{\"username\": \"denis-the-menace\"}";
 
         mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_PATH + "current-cart")
+                        .get(BASE_PATH + "/denis-the-menace")
                         .content(jsonForBody).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -66,9 +66,9 @@ public class TestCartRestController {
     public void updateCartTest() throws Exception {
         String jsonForBody = "{\"username\": \"denis-the-menace\"}";
 
-        mvc.perform(put(BASE_PATH + "update-cart/B001/3")
-                .content(jsonForBody)
-                .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(put(BASE_PATH + "/B001/3")
+                        .content(jsonForBody)
+                        .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.cartProducts[2].quantity").value("3"))
@@ -77,29 +77,28 @@ public class TestCartRestController {
 
     @Test
     public void createCartTest() throws Exception {
-        String jsonForBody = "{\"user\": {\"username\": \"Yedi-Tester\"}}";
+        String jsonForBody = "{\"username\": \"Yedi-Tester\"}";
 
-        mvc.perform(post(BASE_PATH + "create-cart/B001/8")
+        mvc.perform(post(BASE_PATH)
                         .content(jsonForBody)
                         .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.cartProducts[0].quantity").value("8"))
-                .andExpect(jsonPath("$.cartProducts[0].product.name").value("Couscous"));
+                .andExpect(jsonPath("$.cartProducts").isEmpty());
     }
 
     @Test
     public void checkoutCartTest() throws Exception {
         String jsonForBody = "{\"username\": \"denis-the-menace\"}";
 
-        mvc.perform(put(BASE_PATH + "checkout-cart")
+        mvc.perform(put(BASE_PATH)
                         .content(jsonForBody)
                         .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.checkedOut").exists())
                 .andExpect(jsonPath("$.checkedOut").value("true"))
-                .andDo(result -> mvc.perform(put(BASE_PATH + "checkout-cart")
+                .andDo(result -> mvc.perform(put(BASE_PATH)
                                 .content(jsonForBody)
                                 .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                         .andDo(print())

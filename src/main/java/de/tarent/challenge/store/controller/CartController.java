@@ -35,7 +35,7 @@ public class CartController {
         return ResponseEntity.ok(cartService.retrieveAllCarts());
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/{username}")
     public ResponseEntity getCurrentCart(@PathVariable String username) {
         Cart cart = cartService.retrieveCartByUserName(username);
         if (cart != null) {
