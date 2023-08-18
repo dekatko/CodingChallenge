@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -20,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class TestProductRestController {
 
-    public static final String BASE_PATH = "/products/";
+    public static final String BASE_PATH = "/products";
     @Autowired
     MockMvc mvc;
 
@@ -29,9 +30,9 @@ public class TestProductRestController {
     }
 
     @Test
-    public void retrieveProductsTest() throws Exception{
+    public void retrieveProductsTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                .get(BASE_PATH))
+                        .get(BASE_PATH))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].sku").exists())
@@ -40,9 +41,9 @@ public class TestProductRestController {
     }
 
     @Test
-    public void retrieveProductBySkuTest() throws Exception{
+    public void retrieveProductBySkuTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_PATH + "102"))
+                        .get(BASE_PATH + "/102"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sku").exists())
@@ -55,9 +56,9 @@ public class TestProductRestController {
     public void updateProductTest() throws Exception {
         String jsonForBody = "{\"name\": \"Milk\"}";
 
-        mvc.perform(put(BASE_PATH + "update-product/102")
-                .content(jsonForBody)
-                .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(put(BASE_PATH + "/102")
+                        .content(jsonForBody)
+                        .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Milk"));
@@ -67,7 +68,7 @@ public class TestProductRestController {
     public void createProductTest() throws Exception {
         String jsonForBody = "{\"sku\": \"777-777-777\",\"name\": \"Chainsaw\",\"price\": \"6.33\", \"eans\": [\"123-456-789\"]}";
 
-        mvc.perform(post(BASE_PATH + "create-product")
+        mvc.perform(post(BASE_PATH)
                         .content(jsonForBody)
                         .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -83,19 +84,17 @@ public class TestProductRestController {
         String jsonForProductUpdateBody = "{\"available\": \"false\"}";
         String jsonForCartUpdateBody = "{\"username\": \"denis-the-menace\"}";
 
-        mvc.perform(put(BASE_PATH + "update-product/102")
+        mvc.perform(put(BASE_PATH + "/102")
                         .content(jsonForProductUpdateBody)
                         .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.available").value("false"))
                 .andDo(result ->
-
-
-        mvc.perform(put(BASE_PATH + "update-cart/102/3")
-                        .content(jsonForCartUpdateBody)
-                        .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().is4xxClientError()));
+                        mvc.perform(put(BASE_PATH + "/102/3")
+                                        .content(jsonForCartUpdateBody)
+                                        .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
+                                .andDo(print())
+                                .andExpect(status().is4xxClientError()));
     }
 }
