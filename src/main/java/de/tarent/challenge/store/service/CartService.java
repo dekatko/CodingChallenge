@@ -38,18 +38,20 @@ public class CartService {
         return cartRepo.findCartByUserName(username);
     }
 
-    public Cart createCart(String username) {
+    public ResponseEntity createCart(String username) {
         User user = userRepo.findUserByUsername(username);
-        if (cartRepo.findCartByUserName(username) == null) {
+        Cart existingCart = cartRepo.findCartByUserName(username);
+        if (existingCart == null) {
             List<CartProduct> cartProductList = new ArrayList<>();
             Cart cart = new Cart();
             cart.setUser(user);
             cart.setCheckedOut(false);
             cart.setCartProducts(cartProductList);
 
-            return cartRepo.save(cart);
+            return ResponseEntity.ok(cartRepo.save(cart));
         }
-        return null;
+        //According to RFC 7231, a 303 See Other MAY be used If the result of processing a POST would be equivalent to a representation of an existing resource.
+        return ResponseEntity.status(HttpStatus.SEE_OTHER).body(existingCart);
     }
 
     public ResponseEntity updateCart(String sku, Integer quantity, UserDTO user) {

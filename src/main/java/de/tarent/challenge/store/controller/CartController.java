@@ -46,11 +46,7 @@ public class CartController {
 
     @PostMapping
     public ResponseEntity createCart(@RequestBody UserDTO userDTO) {
-        Cart cart = cartService.createCart(userDTO.getUsername());
-        if (cart != null) {
-            return ResponseEntity.ok(cart);
-        }
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("A cart already exists for this user");
+        return cartService.createCart(userDTO.getUsername());
     }
 
     @PutMapping("/{sku}/{quantity}")
