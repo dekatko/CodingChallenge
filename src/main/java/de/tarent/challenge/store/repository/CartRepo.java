@@ -7,8 +7,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface CartRepo extends JpaRepository<Cart, Long> {
 
-    @Query("SELECT c FROM Cart c WHERE c.user.username = :#{#username}")
-    Cart findCartByUserName(@Param("username") String username);
+    @Query("SELECT c FROM Cart c WHERE c.customer.username = :#{#username}")
+    Cart findCartByCustomerName(@Param("username") String username);
 
 
 }

@@ -4,13 +4,13 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.*;
-import javax.validation.constraints.Min;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.Set;
 
-import static javax.persistence.GenerationType.AUTO;
+import static jakarta.persistence.GenerationType.AUTO;
 
 @Entity
 public class Product {

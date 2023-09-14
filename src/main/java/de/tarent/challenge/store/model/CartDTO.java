@@ -5,7 +5,7 @@ import java.util.List;
 public class CartDTO {
     private List<CartProduct> cartProducts;
 
-    private User user;
+    private Customer customer;
 
     private boolean checkedOut;
 
@@ -13,9 +13,9 @@ public class CartDTO {
 
     }
 
-    public CartDTO(List<CartProduct> cartProducts, User user) {
+    public CartDTO(List<CartProduct> cartProducts, Customer customer) {
         this.cartProducts = cartProducts;
-        this.user = user;
+        this.customer = customer;
     }
 
     public List<CartProduct> getCartProducts() {
@@ -26,12 +26,12 @@ public class CartDTO {
         this.cartProducts = cartProducts;
     }
 
-    public User getUser() {
-        return user;
+    public Customer getUser() {
+        return customer;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Customer customer) {
+        this.customer = customer;
     }
 
     public boolean isCheckedOut() {

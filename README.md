@@ -48,7 +48,7 @@ It provides information about a few products that are defined in `src/main/resou
 ## Task 3: Manage carts
 
 - Add the ability to manage carts.
-  A user should be able to:
+  A customer should be able to:
   - Create a new cart
   - Update their cart
   - Get their current cart
@@ -60,7 +60,7 @@ It provides information about a few products that are defined in `src/main/resou
 ## Task 4: Checkout carts
 
 - Add the ability to checkout carts.
-  A user should be able to mark their cart as checked out.
+  A customer should be able to mark their cart as checked out.
 - Carts that have been checked out cannot be changed anymore.
 
 ## Bonus Task 1: Available products

@@ -1,14 +1,14 @@
 package de.tarent.challenge.store.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 
-import static javax.persistence.GenerationType.AUTO;
+import static jakarta.persistence.GenerationType.AUTO;
 
 @Entity
-public class User {
+public class Customer {
 
     @Id
     @GeneratedValue(strategy = AUTO)
@@ -17,10 +17,10 @@ public class User {
     @Column(nullable = false)
     private String username;
 
-    public User() {
+    public Customer() {
     }
 
-    public User(String username) {
+    public Customer(String username) {
         this.username = username;
     }
 

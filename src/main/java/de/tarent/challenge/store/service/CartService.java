@@ -9,8 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CartService {
@@ -34,17 +35,17 @@ public class CartService {
         return cartRepo.findAll();
     }
 
-    public Cart retrieveCartByUserName(String username) {
-        return cartRepo.findCartByUserName(username);
+    public Cart retrieveCartByCustomerName(String username) {
+        return cartRepo.findCartByCustomerName(username);
     }
 
     public ResponseEntity createCart(String username) {
-        User user = userRepo.findUserByUsername(username);
-        Cart existingCart = cartRepo.findCartByUserName(username);
+        Customer customer = userRepo.findUserByUsername(username);
+        Cart existingCart = cartRepo.findCartByCustomerName(username);
         if (existingCart == null) {
-            List<CartProduct> cartProductList = new ArrayList<>();
+            Map<String, CartProduct> cartProductList = new HashMap<>();
             Cart cart = new Cart();
-            cart.setUser(user);
+            cart.setUser(customer);
             cart.setCheckedOut(false);
             cart.setCartProducts(cartProductList);
 
@@ -54,15 +55,17 @@ public class CartService {
         return ResponseEntity.status(HttpStatus.SEE_OTHER).body(existingCart);
     }
 
+    //Implement removal of product
+
     public ResponseEntity updateCart(String sku, Integer quantity, UserDTO user) {
-        Cart cartToUpdate = cartRepo.findCartByUserName(user.getUsername());
+        Cart cartToUpdate = cartRepo.findCartByCustomerName(user.getUsername());
         Product product = productRepo.findBySku(sku);
 
         //Produkt bei zweitem Update Menge erhöhen, nicht neues Produkt hinzufügen
         if (cartToUpdate.isCheckedOut()) {
             return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Cart cannot be updated. Cart is already checked out.");
-        } else if (product.isAvailable()) {
-            cartToUpdate.getCartProducts().add(cartProductRepo.save(new CartProduct(cartToUpdate, product, quantity)));
+        } else if (product.isAvailable() && !cartToUpdate.getCartProducts().containsKey(sku)) {
+            cartToUpdate.getCartProducts().put(sku, cartProductRepo.save(new CartProduct(cartToUpdate, product, quantity)));
 
             cartRepo.save(cartToUpdate);
 
@@ -75,7 +78,7 @@ public class CartService {
 
     //Nach Checkout KEINE Preisänderung!
     public ResponseEntity checkoutCart(UserDTO user) {
-        Cart cartToCheckout = cartRepo.findCartByUserName(user.getUsername());
+        Cart cartToCheckout = cartRepo.findCartByCustomerName(user.getUsername());
 
         if (!cartToCheckout.isCheckedOut()) {
             cartToCheckout.setCheckedOut(true);

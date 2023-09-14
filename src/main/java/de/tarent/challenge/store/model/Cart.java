@@ -1,15 +1,14 @@
 package de.tarent.challenge.store.model;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
 import javax.validation.constraints.NotNull;
 
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Map;
 
-import static javax.persistence.GenerationType.AUTO;
+import static jakarta.persistence.GenerationType.AUTO;
+
 
 @Entity
 public class Cart {
@@ -19,35 +18,35 @@ public class Cart {
     private Long id;
 
     @OneToMany(mappedBy = "pk.cart")
-    private List<CartProduct> cartProducts;
+    private Map<String, CartProduct> cartProducts;
 
     @OneToOne
     @NotNull
-    private User user;
+    private Customer customer;
 
     @Column(nullable = false)
     private boolean checkedOut;
 
     @Transient
     public BigDecimal getTotalCartPrice() {
-        List<CartProduct> cartProducts = getCartProducts();
-        return cartProducts.stream().map(cp -> cp.getTotalPrice()).reduce(BigDecimal.ZERO, (a, b) -> a.add(b));
+        Map<String, CartProduct> cartProducts = getCartProducts();
+        return cartProducts.values().stream().map(CartProduct::getTotalPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public void setCartProducts(List<CartProduct> cartProducts) {
+    public void setCartProducts(Map<String, CartProduct> cartProducts) {
         this.cartProducts = cartProducts;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Customer customer) {
+        this.customer = customer;
     }
 
-    public List<CartProduct> getCartProducts() {
+    public Map<String, CartProduct> getCartProducts() {
         return cartProducts;
     }
 
-    public User getUser() {
-        return user;
+    public Customer getUser() {
+        return customer;
     }
 
     public boolean isCheckedOut() {
@@ -61,9 +60,9 @@ public class Cart {
     public Cart() {
     }
 
-    public Cart(List<CartProduct> cartProducts, User user, boolean checkedOut) {
+    public Cart(Map<String, CartProduct> cartProducts, Customer customer, boolean checkedOut) {
         this.cartProducts = cartProducts;
-        this.user = user;
+        this.customer = customer;
         this.checkedOut = checkedOut;
     }
 }
