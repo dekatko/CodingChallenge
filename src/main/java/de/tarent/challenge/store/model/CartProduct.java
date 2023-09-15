@@ -46,6 +46,12 @@ public class CartProduct {
         return quantity;
     }
 
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+
+    public void increaseQuantity(Integer quantity) { this.quantity += quantity; }
+
+    public void decreaseQuantity(Integer quantity) { this.quantity -= quantity; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

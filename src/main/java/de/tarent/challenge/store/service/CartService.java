@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,7 @@ public class CartService {
         Customer customer = userRepo.findUserByUsername(username);
         Cart existingCart = cartRepo.findCartByCustomerName(username);
         if (existingCart == null) {
-            Map<String, CartProduct> cartProductList = new HashMap<>();
+            List<CartProduct> cartProductList = new ArrayList<>();
             Cart cart = new Cart();
             cart.setUser(customer);
             cart.setCheckedOut(false);
@@ -56,7 +57,6 @@ public class CartService {
     }
 
     //Implement removal of product
-
     public ResponseEntity updateCart(String sku, Integer quantity, UserDTO user) {
         Cart cartToUpdate = cartRepo.findCartByCustomerName(user.getUsername());
         Product product = productRepo.findBySku(sku);
@@ -64,13 +64,13 @@ public class CartService {
         //Produkt bei zweitem Update Menge erhöhen, nicht neues Produkt hinzufügen
         if (cartToUpdate.isCheckedOut()) {
             return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Cart cannot be updated. Cart is already checked out.");
-        } else if (product.isAvailable() && !cartToUpdate.getCartProducts().containsKey(sku)) {
-            cartToUpdate.getCartProducts().put(sku, cartProductRepo.save(new CartProduct(cartToUpdate, product, quantity)));
-
-            cartRepo.save(cartToUpdate);
-
+        } else if (product.isAvailable() && !productAlreadyInCart(cartToUpdate.getCartProducts(), sku)) {
+            cartToUpdate.getCartProducts().add(cartProductRepo.save(new CartProduct(cartToUpdate, product, quantity)));
             //Ganzen Cart zurückgeben
-            return ResponseEntity.ok(cartToUpdate);
+            return ResponseEntity.ok(cartRepo.save(cartToUpdate));
+        } else if(product.isAvailable() && productAlreadyInCart(cartToUpdate.getCartProducts(), sku)) {
+            updateQuantityOfProductInCart(cartToUpdate, sku, quantity);
+            return ResponseEntity.ok(cartRepo.save(cartToUpdate));
         } else {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("Product not available");
         }
@@ -82,11 +82,20 @@ public class CartService {
 
         if (!cartToCheckout.isCheckedOut()) {
             cartToCheckout.setCheckedOut(true);
-            cartRepo.save(cartToCheckout);
 
-            return ResponseEntity.ok(cartToCheckout);
+            return ResponseEntity.ok(cartRepo.save(cartToCheckout));
         }
 
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Cart already checked out!");
+    }
+
+    private boolean productAlreadyInCart(List<CartProduct> cartProducts, String sku) {
+        return cartProducts.stream().anyMatch(c -> c.getProduct().getSku().equals(sku));
+    }
+
+    private void updateQuantityOfProductInCart(Cart cart, String sku, int quantity) {
+        cart.getCartProducts().stream()
+                .filter(cartProduct -> cartProduct.getProduct().getSku().equals(sku))
+                .forEach(cartProduct -> cartProduct.increaseQuantity(quantity));
     }
 }

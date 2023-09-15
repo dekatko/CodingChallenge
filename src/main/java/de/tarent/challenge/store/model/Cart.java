@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 import static jakarta.persistence.GenerationType.AUTO;
@@ -18,7 +19,7 @@ public class Cart {
     private Long id;
 
     @OneToMany(mappedBy = "pk.cart")
-    private Map<String, CartProduct> cartProducts;
+    private List<CartProduct> cartProducts;
 
     @OneToOne
     @NotNull
@@ -29,11 +30,11 @@ public class Cart {
 
     @Transient
     public BigDecimal getTotalCartPrice() {
-        Map<String, CartProduct> cartProducts = getCartProducts();
-        return cartProducts.values().stream().map(CartProduct::getTotalPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+        List<CartProduct> cartProducts = getCartProducts();
+        return cartProducts.stream().map(CartProduct::getTotalPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public void setCartProducts(Map<String, CartProduct> cartProducts) {
+    public void setCartProducts(List<CartProduct> cartProducts) {
         this.cartProducts = cartProducts;
     }
 
@@ -41,7 +42,7 @@ public class Cart {
         this.customer = customer;
     }
 
-    public Map<String, CartProduct> getCartProducts() {
+    public List<CartProduct> getCartProducts() {
         return cartProducts;
     }
 
@@ -60,7 +61,7 @@ public class Cart {
     public Cart() {
     }
 
-    public Cart(Map<String, CartProduct> cartProducts, Customer customer, boolean checkedOut) {
+    public Cart(List<CartProduct> cartProducts, Customer customer, boolean checkedOut) {
         this.cartProducts = cartProducts;
         this.customer = customer;
         this.checkedOut = checkedOut;
